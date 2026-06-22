@@ -37,15 +37,15 @@ namespace DeliveryTemperatureLimit
             {
                     Type = PTextField.FieldType.Integer,
                     OnTextChanged = OnTextChangedLow,
+                    MinWidth = 72
             };
-            lowInputField.SetMinWidthInCharacters(6);
             lowInputField.AddOnRealize((obj) => lowInput = obj);
             PTextField highInputField = new PTextField( "highLimit" )
             {
                 Type = PTextField.FieldType.Integer,
                 OnTextChanged = OnTextChangedHigh,
+                MinWidth = 72
             };
-            highInputField.SetMinWidthInCharacters(6);
             highInputField.AddOnRealize((obj) => highInput = obj);
             PLabel label = new PLabel( "label" )
             {
