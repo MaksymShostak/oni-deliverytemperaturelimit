@@ -180,21 +180,20 @@ namespace DeliveryTemperatureLimit
             float total = 0;
             // Sum up amounts for all indexes included in the range.
             // Make sure to include amounts from sub-worlds and/or the parent world.
-            // TODO: Would it be worth it to cache this?
             int parentWorldId = world.ParentWorldId;
-            for( int index = lowIndex; index < highIndex; ++index )
+            foreach( WorldContainer world2 in ClusterManager.Instance.WorldContainers )
             {
-                foreach( WorldContainer world2 in ClusterManager.Instance.WorldContainers )
+                if( world2.ParentWorldId == parentWorldId ) // (Parent points to self if does not exist.)
                 {
-                    if( world2.ParentWorldId == parentWorldId ) // (Parent points to self if does not exist.)
+                    // Use TryGetValue to avoid expensive KeyNotFoundException allocations and stack traces.
+                    if( worldAmounts.TryGetValue( world2.id, out AmountByTagIndexDict amounts ))
                     {
-                        // This is a race condition, as the indexes may change before the world amounts
-                        // info is updated, so cope with that. The proper value will eventually be calculated.
-                        try
+                        for( int index = lowIndex; index < highIndex; ++index )
                         {
-                            total += worldAmounts[ world2.id ][ ( tag, index ) ];
-                        } catch( KeyNotFoundException )
-                        {
+                            if( amounts.TryGetValue( ( tag, index ), out float amount ))
+                            {
+                                total += amount;
+                            }
                         }
                     }
                 }
