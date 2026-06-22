@@ -27,9 +27,16 @@ namespace DeliveryTemperatureLimit
             // Ignore the change material case. It results in a deconstruct+construct combo,
             // and it'd be necessary to carry-over the temperatures, which the game can't do even
             // for settings of the building. Reconsider when that is implemented.
-            DetailsScreenMaterialPanel detailsScreenMaterialPanel
-                = DetailsScreen.Instance.GetTabOfType(DetailsScreen.SidescreenTabTypes.Material)
-                    .bodyInstance.GetComponentInChildren<DetailsScreenMaterialPanel>();
+            if (DetailsScreen.Instance == null)
+                return;
+            var tab = DetailsScreen.Instance.GetTabOfType(DetailsScreen.SidescreenTabTypes.Material);
+            if (tab == null || tab.bodyInstance == null)
+                return;
+            DetailsScreenMaterialPanel detailsScreenMaterialPanel = tab.bodyInstance.GetComponentInChildren<DetailsScreenMaterialPanel>();
+            if (detailsScreenMaterialPanel == null)
+                return;
+            if (materialSelectionPanelField == null)
+                return;
             if( __instance == (MaterialSelectionPanel) materialSelectionPanelField.GetValue( detailsScreenMaterialPanel ))
                 return;
             // Create and set the build singleton instance, it shouldn't matter in which game object it is.
