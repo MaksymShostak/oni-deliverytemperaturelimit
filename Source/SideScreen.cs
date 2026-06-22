@@ -98,6 +98,12 @@ namespace DeliveryTemperatureLimit
             var widget = GetComponent<TemperatureLimitWidget>();
             return widget != null && widget.IsAnyFieldFocused();
         }
+
+        protected override void OnDisable()
+        {
+            this.isEditing = false;
+            base.OnDisable();
+        }
     }
 
     [HarmonyPatch(typeof(DetailsScreen))]

@@ -32,6 +32,8 @@ namespace DeliveryTemperatureLimit
 
         public static TemperatureLimit Get( GameObject gameObject )
         {
+            if (gameObject == null)
+                return null;
             if( fastMap.TryGetValue( gameObject, out TemperatureLimit limit ))
                 return limit;
             return null;
