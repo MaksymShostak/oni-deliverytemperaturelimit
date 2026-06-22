@@ -11,8 +11,9 @@ namespace DeliveryTemperatureLimit
     public class TemperatureLimitWidget : KMonoBehaviour
     {
         private GameObject lowInput;
-
         private GameObject highInput;
+        private TMPro.TMP_InputField lowField;
+        private TMPro.TMP_InputField highField;
 
         private TemperatureLimit target;
 
@@ -39,14 +40,20 @@ namespace DeliveryTemperatureLimit
                     OnTextChanged = OnTextChangedLow,
                     MinWidth = 72
             };
-            lowInputField.AddOnRealize((obj) => lowInput = obj);
+            lowInputField.AddOnRealize((obj) => {
+                lowInput = obj;
+                lowField = obj.GetComponent<TMPro.TMP_InputField>();
+            });
             PTextField highInputField = new PTextField( "highLimit" )
             {
                 Type = PTextField.FieldType.Integer,
                 OnTextChanged = OnTextChangedHigh,
                 MinWidth = 72
             };
-            highInputField.AddOnRealize((obj) => highInput = obj);
+            highInputField.AddOnRealize((obj) => {
+                highInput = obj;
+                highField = obj.GetComponent<TMPro.TMP_InputField>();
+            });
             PLabel label = new PLabel( "label" )
             {
                 TextStyle = PUITuning.Fonts.TextDarkStyle,
@@ -90,7 +97,7 @@ namespace DeliveryTemperatureLimit
 
         private void UpdateInputsInternal()
         {
-            if (target == null || lowInput == null || highInput == null)
+            if (target == null || lowField == null || highField == null)
                 return;
 
             if (target.IsDisabled())
@@ -100,29 +107,27 @@ namespace DeliveryTemperatureLimit
             else
             {
                 if (target.LowLimit == TemperatureLimit.MinValue)
-                    SetInputText(lowInput, -1);
+                    SetInputText(lowField, -1);
                 else
-                    SetInputText(lowInput, target.LowLimit);
+                    SetInputText(lowField, target.LowLimit);
 
                 if (target.HighLimit == TemperatureLimit.MaxValue)
-                    SetInputText(highInput, -1);
+                    SetInputText(highField, -1);
                 else
-                    SetInputText(highInput, target.HighLimit);
+                    SetInputText(highField, target.HighLimit);
             }
             UpdateToolTip();
         }
 
         private void EmptyInputsInternal()
         {
-            TMP_InputField lowField = lowInput.GetComponent<TMP_InputField>();
-            TMP_InputField highField = highInput.GetComponent<TMP_InputField>();
-            if (lowField.text != "") lowField.text = "";
-            if (highField.text != "") highField.text = "";
+            if (lowField != null && lowField.text != "") lowField.text = "";
+            if (highField != null && highField.text != "") highField.text = "";
         }
 
-        private void SetInputText(GameObject input, int value)
+        private void SetInputText(TMP_InputField field, int value)
         {
-            TMP_InputField field = input.GetComponent<TMP_InputField>();
+            if (field == null) return;
             if (value == -1)
             {
                 if (field.text != "") field.text = "";
@@ -237,11 +242,6 @@ namespace DeliveryTemperatureLimit
 
         public bool IsAnyFieldFocused()
         {
-            if (lowInput == null || highInput == null) return false;
-            
-            var lowField = lowInput.GetComponent<TMPro.TMP_InputField>();
-            var highField = highInput.GetComponent<TMPro.TMP_InputField>();
-            
             return (lowField != null && lowField.isFocused) || (highField != null && highField.isFocused);
         }
 

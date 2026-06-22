@@ -8,10 +8,11 @@ namespace DeliveryTemperatureLimit
     public class TemperatureLimitSideScreen : SideScreenContent
     {
         private TemperatureLimit target;
+        private TemperatureLimitWidget widget;
 
         protected override void OnPrefabInit()
         {
-            gameObject.AddOrGet<TemperatureLimitWidget>();
+            widget = gameObject.AddOrGet<TemperatureLimitWidget>();
             ContentContainer = gameObject;
             base.OnPrefabInit();
         }
@@ -39,7 +40,11 @@ namespace DeliveryTemperatureLimit
                 Debug.LogError("The gameObject received does not contain a TemperatureLimit component");
                 return;
             }
-            gameObject.AddOrGet<TemperatureLimitWidget>().SetTarget(target);
+            if (widget == null)
+            {
+                widget = gameObject.AddOrGet<TemperatureLimitWidget>();
+            }
+            widget.SetTarget(target);
         }
 
         public override string GetTitle()
@@ -95,7 +100,6 @@ namespace DeliveryTemperatureLimit
 
         private bool IsAnyFieldFocused()
         {
-            var widget = GetComponent<TemperatureLimitWidget>();
             return widget != null && widget.IsAnyFieldFocused();
         }
 
